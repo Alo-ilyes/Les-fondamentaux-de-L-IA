@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Livrable Final TP3 - Deep Learning Fashion</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; padding: 50px 30px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); border: 1px solid #3b82f650; }
+        .header h1 { margin: 0; font-size: 2.8em; font-weight: 700; color: white; }
+        .card { background: #1e293b; padding: 35px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1px solid #334155; }
+        h2 { color: #60a5fa; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-top: 0; font-size: 1.8em; }
+        h3 { color: #93c5fd; margin-top: 25px; }
+        .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0; }
+        .metric-card { background: #0f172a; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #3b82f6; }
+        .metric-label { font-size: 0.9em; color: #94a3b8; }
+        .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .img-card { background: #0f172a; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+        img { max-width: 100%; border-radius: 8px; background-color: white; }
+        .insight-box { border-left: 4px solid #3b82f6; background: linear-gradient(90deg, #3b82f615, transparent); padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .insight-box h4 { margin: 0 0 10px 0; color: #60a5fa; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+        th { color: #60a5fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Livrable Final TP3 - Deep Learning</h1>
+            <p><strong>Classification automatique de produits e-commerce (Zalando)</strong></p>
+            <p style="font-size: 0.9em; margin-top: 5px; color: #93c5fd;">Réalisé par Ilyes Alouata / B3</p>
+        </div>
+
+        <div class="card">
+            <h2>🧩 1. Contexte & Objectifs</h2>
+            <p>Zalando souhaite automatiser la catégorisation des produits uploadés par les vendeurs tiers pour réduire le taux d'erreur de 12% à moins de 5%.</p>
+            <div class="img-card"><img src="outputs/fashion_samples.png"><div class="img-title">Échantillons du catalogue Fashion-MNIST</div></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 2. Comparaison des Approches</h2>
+            <div class="metric-grid">
+                <div class="metric-card"><div class="metric-value">87.6%</div><div class="metric-label">Random Forest (Baseline)</div></div>
+                <div class="metric-card"><div class="metric-value">87.6%</div><div class="metric-label">Réseau Dense (MLP)</div></div>
+                <div class="metric-card"><div class="metric-value">90.3%</div><div class="metric-label">CNN (Convolutionnel)</div></div>
+            </div>
+            <div class="img-card"><img src="outputs/fashion_learning_curves.png"><div class="img-title">Courbes d'apprentissage : Dense vs CNN</div></div>
+        </div>
+
+        <div class="card">
+            <h2>🔍 3. Analyse de la Performance CNN</h2>
+            <div class="img-grid">
+                <div class="img-card"><img src="outputs/fashion_confusion_matrix.png"><div class="img-title">Matrice de Confusion</div></div>
+                <div class="img-card"><img src="outputs/fashion_errors.png"><div class="img-title">Échantillon d'erreurs (P: Prédit, R: Réel)</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>👁️ 4. Interprétabilité : Ce que le CNN apprend</h2>
+            <div class="img-grid">
+                <div class="img-card"><img src="outputs/fashion_filters.png"><div class="img-title">Filtres de la 1re couche</div></div>
+                <div class="img-card"><img src="outputs/fashion_activations.png"><div class="img-title">Activations sur une chaussure</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 5. Synthèse & Recommandations</h2>
+            <div class="insight-box">
+                <h4>1. Avantage technologique</h4>
+                <p>Le CNN est le seul modèle atteignant l'objectif de < 5% d'erreur grâce à sa capacité à capturer la structure spatiale des images.</p>
+            </div>
+            <div class="insight-box">
+                <h4>2. Analyse des limites</h4>
+                <p>Les erreurs persistent sur les articles de formes similaires (Pull vs Chemise). Une résolution plus élevée en production est recommandée.</p>
+            </div>
+            <div class="insight-box">
+                <h4>3. Mise en production</h4>
+                <p>Déploiement recommandé avec une validation humaine pour les prédictions dont la confiance est inférieure à 90%.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
