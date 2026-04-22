@@ -1,4 +1,5 @@
 import os
+import base64
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -167,89 +168,186 @@ def visualize_activations(model, X_test_cnn, y_test, class_names):
     plt.savefig(os.path.join(OUTPUT_DIR, "fashion_activations.png"))
     plt.close()
 
+def get_base64_img(filename):
+    """Encode une image en base64 pour l'intégrer au HTML."""
+    filepath = os.path.join(OUTPUT_DIR, filename)
+    if not os.path.exists(filepath):
+        return ""
+    with open(filepath, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
 def generate_report(results):
+    """
+    Génère un rapport HTML Ultra-Premium (Standalone) pour le TP3.
+    """
+    print("[10/10] Génération du rapport Ultra-Premium...")
+    
+    img_samples = get_base64_img("fashion_samples.png")
+    img_curves = get_base64_img("fashion_learning_curves.png")
+    img_cm = get_base64_img("fashion_confusion_matrix.png")
+    img_errors = get_base64_img("fashion_errors.png")
+    img_filters = get_base64_img("fashion_filters.png")
+    img_activations = get_base64_img("fashion_activations.png")
+
     html_content = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Livrable Final TP3 - Deep Learning Fashion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livrable Final TP3 - Ilyes Alouata</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-        body {{ font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; line-height: 1.6; }}
-        .container {{ max-width: 1000px; margin: 0 auto; }}
-        .header {{ text-align: center; margin-bottom: 40px; padding: 50px 30px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); border: 1px solid #3b82f650; }}
-        .header h1 {{ margin: 0; font-size: 2.8em; font-weight: 700; color: white; }}
-        .card {{ background: #1e293b; padding: 35px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1px solid #334155; }}
-        h2 {{ color: #60a5fa; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-top: 0; font-size: 1.8em; }}
-        h3 {{ color: #93c5fd; margin-top: 25px; }}
-        .metric-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0; }}
-        .metric-card {{ background: #0f172a; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #334155; }}
-        .metric-value {{ font-size: 2em; font-weight: bold; color: #3b82f6; }}
-        .metric-label {{ font-size: 0.9em; color: #94a3b8; }}
-        .img-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }}
-        .img-card {{ background: #0f172a; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }}
-        img {{ max-width: 100%; border-radius: 8px; background-color: white; }}
-        .insight-box {{ border-left: 4px solid #3b82f6; background: linear-gradient(90deg, #3b82f615, transparent); padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }}
-        .insight-box h4 {{ margin: 0 0 10px 0; color: #60a5fa; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
-        th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #334155; }}
-        th {{ color: #60a5fa; }}
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        
+        :root {{
+            --bg-color: #050a18;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --accent: #f59e0b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --cnn-color: #38bdf8;
+        }}
+
+        body {{
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+        }}
+
+        .container {{ max-width: 1100px; margin: 0 auto; }}
+
+        .header {{
+            padding: 60px 40px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }}
+
+        .header h1 {{
+            margin: 0;
+            font-size: 3.2em;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }}
+
+        .section {{
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }}
+
+        h2 {{ color: var(--accent); display: flex; align-items: center; gap: 15px; }}
+
+        .metric-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }}
+        .metric-card {{ background: #0c1222; padding: 20px; border-radius: 16px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); }}
+        .metric-val {{ font-size: 2.2em; font-weight: 700; color: var(--cnn-color); }}
+        
+        .img-wrapper {{ background: #000; border-radius: 16px; padding: 10px; border: 1px solid rgba(245, 158, 11, 0.1); margin-top: 15px; }}
+        .img-wrapper img {{ width: 100%; border-radius: 10px; }}
+        .img-caption {{ text-align: center; color: var(--text-dim); font-size: 0.85em; margin-top: 10px; }}
+
+        .insight-card {{
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), transparent);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin-top: 20px;
+        }}
+
+        .footer {{ text-align: center; color: var(--text-dim); font-size: 0.85em; margin-top: 60px; }}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Livrable Final TP3 - Deep Learning</h1>
-            <p><strong>Classification automatique de produits e-commerce (Zalando)</strong></p>
-            <p style="font-size: 0.9em; margin-top: 5px; color: #93c5fd;">Réalisé par Ilyes Alouata / B3</p>
-        </div>
+        <header class="header">
+            <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8em; color: var(--accent); margin-bottom: 10px;">Deep Learning & Computer Vision</div>
+            <h1>Classification E-Commerce</h1>
+            <p>Réseaux de Neurones Convolutifs sur Fashion-MNIST</p>
+            <div style="margin-top:30px; color: var(--text-dim);">Auteur : <strong>Ilyes Alouata</strong> | Zalando Catalog Intelligence</div>
+        </header>
 
-        <div class="card">
-            <h2>🧩 1. Contexte & Objectifs</h2>
-            <p>Zalando souhaite automatiser la catégorisation des produits uploadés par les vendeurs tiers pour réduire le taux d'erreur de 12% à moins de 5%.</p>
-            <div class="img-card"><img src="outputs/fashion_samples.png"><div class="img-title">Échantillons du catalogue Fashion-MNIST</div></div>
-        </div>
+        <section class="section">
+            <h2>🧩 1. Contexte Métier</h2>
+            <p>L'objectif est de corriger les erreurs de catégorisation (12% initialement) pour descendre sous les 5%. Nous utilisons le dataset <strong>Fashion-MNIST</strong> (images 28x28 pixels).</p>
+            <div class="img-wrapper">
+                <img src="data:image/png;base64,{img_samples}">
+                <div class="img-caption">Échantillons du catalogue (Sneakers, Pulls, Robes...)</div>
+            </div>
+        </section>
 
-        <div class="card">
-            <h2>📊 2. Comparaison des Approches</h2>
+        <section class="section">
+            <h2>📊 2. Benchmarking Algorithmique</h2>
             <div class="metric-grid">
-                <div class="metric-card"><div class="metric-value">{results['rf']*100:.1f}%</div><div class="metric-label">Random Forest (Baseline)</div></div>
-                <div class="metric-card"><div class="metric-value">{results['mlp']*100:.1f}%</div><div class="metric-label">Réseau Dense (MLP)</div></div>
-                <div class="metric-card"><div class="metric-value">{results['cnn']*100:.1f}%</div><div class="metric-label">CNN (Convolutionnel)</div></div>
+                <div class="metric-card">
+                    <div class="metric-val">{results['rf']*100:.1f}%</div>
+                    <div style="color: var(--text-dim)">Random Forest (Baseline)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">{results['mlp']*100:.1f}%</div>
+                    <div style="color: var(--text-dim)">Réseau Dense (MLP)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">{results['cnn']*100:.1f}%</div>
+                    <div style="color: var(--text-dim)">CNN (Production)</div>
+                </div>
             </div>
-            <div class="img-card"><img src="outputs/fashion_learning_curves.png"><div class="img-title">Courbes d'apprentissage : Dense vs CNN</div></div>
-        </div>
+            <div class="img-wrapper">
+                <img src="data:image/png;base64,{img_curves}">
+                <div class="img-caption">Évolution de l'apprentissage (Accuracy Train/Val)</div>
+            </div>
+        </section>
 
-        <div class="card">
-            <h2>🔍 3. Analyse de la Performance CNN</h2>
-            <div class="img-grid">
-                <div class="img-card"><img src="outputs/fashion_confusion_matrix.png"><div class="img-title">Matrice de Confusion</div></div>
-                <div class="img-card"><img src="outputs/fashion_errors.png"><div class="img-title">Échantillon d'erreurs (P: Prédit, R: Réel)</div></div>
+        <section class="section">
+            <h2>🔍 3. Analyse des Erreurs</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="img-wrapper">
+                    <img src="data:image/png;base64,{img_cm}">
+                </div>
+                <div class="img-wrapper">
+                    <img src="data:image/png;base64,{img_errors}">
+                </div>
             </div>
-        </div>
+            <p style="margin-top:20px;">Le CNN atteint ~91% d'accuracy. Les erreurs persistantes concernent les "Pulls" confondus avec les "Chemises", ce qui est cohérent vu la résolution 28x28.</p>
+        </section>
 
-        <div class="card">
-            <h2>👁️ 4. Interprétabilité : Ce que le CNN apprend</h2>
-            <div class="img-grid">
-                <div class="img-card"><img src="outputs/fashion_filters.png"><div class="img-title">Filtres de la 1re couche</div></div>
-                <div class="img-card"><img src="outputs/fashion_activations.png"><div class="img-title">Activations sur une chaussure</div></div>
+        <section class="section">
+            <h2>👁️ 4. Interprétabilité : L'œil du CNN</h2>
+            <p>Visualisation des filtres et des activations de la première couche.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="img-wrapper">
+                    <img src="data:image/png;base64,{img_filters}">
+                    <div class="img-caption">Filtres de convolution (Bords/Textures)</div>
+                </div>
+                <div class="img-wrapper">
+                    <img src="data:image/png;base64,{img_activations}">
+                    <div class="img-caption">Activations (Ce que le réseau "voit")</div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="card">
-            <h2>💡 5. Synthèse & Recommandations</h2>
-            <div class="insight-box">
-                <h4>1. Avantage technologique</h4>
-                <p>Le CNN est le seul modèle atteignant l'objectif de < 5% d'erreur grâce à sa capacité à capturer la structure spatiale des images.</p>
+        <section class="section">
+            <h2>💡 5. Recommandations Comité Technique</h2>
+            <div class="insight-card">
+                <h4>🚀 Avantage CNN</h4>
+                <p>Le mécanisme de convolution permet de capturer la structure spatiale, surpassant les modèles denses. Le surcoût calcul est justifié par le gain de performance.</p>
             </div>
-            <div class="insight-box">
-                <h4>2. Analyse des limites</h4>
-                <p>Les erreurs persistent sur les articles de formes similaires (Pull vs Chemise). Une résolution plus élevée en production est recommandée.</p>
+            <div class="insight-card">
+                <h4>🧠 Optimisation de Production</h4>
+                <p>Pour passer sous les 5% d'erreur, il est recommandé de passer à des images HD (224x224) et d'utiliser l'augmentation de données.</p>
             </div>
-            <div class="insight-box">
-                <h4>3. Mise en production</h4>
-                <p>Déploiement recommandé avec une validation humaine pour les prédictions dont la confiance est inférieure à 90%.</p>
-            </div>
+        </section>
+
+        <div class="footer">
+            Rapport Deep Learning généré par Ilyes Alouata — 2026
         </div>
     </div>
 </body>
@@ -257,7 +355,7 @@ def generate_report(results):
     
     with open("Livrable_Final_TP3.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("\n[+] Rapport Premium généré : Livrable_Final_TP3.html")
+    print("\n[+] Rapport Ultra-Premium généré : Livrable_Final_TP3.html")
 
 def main():
     print("=== Début du Pipeline TP3 ===")
